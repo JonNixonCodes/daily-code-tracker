@@ -64,18 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update the last coded date
         lastCodedDateElement.textContent = streakState.lastCodedDate;
         
-        if (streakState.lastCodedDate === null) {
-            streakMessageQuote = 'Start your streak by coding today!'
-            markCodedTodayButtonText = 'Mark Coded Today!';
-            buttonDisabled = false;
+        if (streakState.lastCodedDate === getTodaysDate()) {
+            // Coded today
+            streakMessageQuote = 'You\'ve already logged your coding for today! 🎉'
+            markCodedTodayButtonText = 'Already Coded Today!';
+            buttonDisabled = true;
         } else if (streakState.lastCodedDate === getYesterdaysDate()) {
+            // Coded yesterday
             streakMessageQuote = 'Let\'s keep your streak going! 💪'
             markCodedTodayButtonText = 'Mark Coded Today!';
             buttonDisabled = false;
         } else {
-            streakMessageQuote = 'You\'ve already logged your coding for today! 🎉'
-            markCodedTodayButtonText = 'Already Coded Today!';
-            buttonDisabled = true;
+            // Never coded
+            streakMessageQuote = 'Start your streak by coding today!'
+            markCodedTodayButtonText = 'Mark Coded Today!';
+            buttonDisabled = false;
         }
         // Update the quote
         streakMessageQuoteElement.textContent = streakMessageQuote;
