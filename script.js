@@ -1,90 +1,122 @@
+// Helper function to get the current date as string
+const getTodaysDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+};
 
-// script.js
+// Helper function to get yesterday's date as string
+const getYesterdaysDate = () => {
+    const today = new Date();
+    let yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    return yesterday.toISOString().split('T')[0];
+};
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
-    const streakCounter = document.querySelector('.streak-counter');
-    const markButton = document.querySelector('.mark-coded-today-button');
-    const lastCodedDateElem = document.querySelector('.streak-message p:last-child');
-
-    let currentStreak = 0;
-    let lastCodedDate = '';
-
-    // Function to get today's date in YYYY-MM-DD format
-    const getTodayDate = () => {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
+    // Code will only execute after HTML content is loaded 
+    console.log("The page is now fully loaded, and my script can start!");
+    
+    // Assign variables to HTML elements for updating
+    const streakCounterElement = document.getElementById('streak-counter');
+    const markCodedTodayButtonElement = document.getElementById('mark-coded-today-button');
+    const lastCodedDateElement = document.getElementById('streak-message-last-coded-date');
+    const streakMessageQuoteElement = document.getElementById('streak-message-quote');
+    
+    // Assign state variables
+    const streakState = {
+        currentStreak: 0,
+        lastCodedDate: 'Never'
     };
-
-    // Function to update the UI
-    const updateUI = () => {
-        streakCounter.textContent = currentStreak;
-        if (lastCodedDate) {
-            lastCodedDateElem.textContent = `Last coded: ${lastCodedDate}`;
-        } else {
-            lastCodedDateElem.textContent = 'Start your streak!';
-        }
-
-        if (lastCodedDate === getTodayDate()) {
-            markButton.disabled = true;
-            markButton.textContent = 'Coded Today!';
-        } else {
-            markButton.disabled = false;
-            markButton.textContent = 'Mark Coded Today!';
-        }
+    
+    
+    // Helper function to save streak state to local storage
+    const saveState = () => {
+        localStorage.setItem('currentStreak', streakState.currentStreak);
+        localStorage.setItem('lastCodedDate', streakState.lastCodedDate);
     };
-
-    // Function to load data from localStorage
-    const loadData = () => {
-        const savedStreak = localStorage.getItem('currentStreak');
-        const savedLastCodedDate = localStorage.getItem('lastCodedDate');
-
-        if (savedLastCodedDate) {
-            lastCodedDate = savedLastCodedDate;
-            const today = new Date(getTodayDate());
-            const lastDate = new Date(lastCodedDate);
-            const diffTime = today - lastDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays > 1) {
-                currentStreak = 0;
-                localStorage.setItem('currentStreak', currentStreak);
-            } else {
-                currentStreak = savedStreak ? parseInt(savedStreak, 10) : 0;
-            }
-        } else {
+    
+    // Helper function to load streak state from local storage
+    const loadState = () => {
+        let currentStreak = localStorage.getItem('currentStreak');
+        let lastCodedDate = localStorage.getItem('lastCodedDate');
+        if (currentStreak === null) {
             currentStreak = 0;
-        }
-        updateUI();
+        };
+        if (lastCodedDate === null) {
+            lastCodedDate = 'Never';
+        };
+        streakState.currentStreak = currentStreak;
+        streakState.lastCodedDate = lastCodedDate;
     };
-
-    // Function to save data to localStorage
-    const saveData = () => {
-        localStorage.setItem('currentStreak', currentStreak);
-        localStorage.setItem('lastCodedDate', lastCodedDate);
-    };
-
-    // Event listener for the button
-    markButton.addEventListener('click', () => {
-        const todayDate = getTodayDate();
-        if (lastCodedDate) {
-            const lastDate = new Date(lastCodedDate);
-            const today = new Date(todayDate);
-            const diffTime = today - lastDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays === 1) {
-                currentStreak++;
-            } else if (diffDays > 1) {
-                currentStreak = 1;
-            }
+    
+    // Helper function to render the widget
+    const renderWidget = () => {
+        // Assign variables
+        let streakMessageQuote = 'Start your streak by coding today!';
+        let markCodedTodayButtonText = 'Mark Coded Today!';
+        let buttonDisabled = false;
+        
+        // Update the current streak
+        streakCounterElement.textContent = streakState.currentStreak;
+        
+        // Update the last coded date
+        lastCodedDateElement.textContent = streakState.lastCodedDate;
+        
+        if (streakState.lastCodedDate === null) {
+            streakMessageQuote = 'Start your streak by coding today!'
+            markCodedTodayButtonText = 'Mark Coded Today!';
+            buttonDisabled = false;
+        } else if (streakState.lastCodedDate === getYesterdaysDate()) {
+            streakMessageQuote = 'Let\'s keep your streak going! 💪'
+            markCodedTodayButtonText = 'Mark Coded Today!';
+            buttonDisabled = false;
         } else {
-            currentStreak = 1;
+            streakMessageQuote = 'You\'ve already logged your coding for today! 🎉'
+            markCodedTodayButtonText = 'Already Coded Today!';
+            buttonDisabled = true;
         }
-        lastCodedDate = todayDate;
-        saveData();
-        updateUI();
+        // Update the quote
+        streakMessageQuoteElement.textContent = streakMessageQuote;
+        
+        // Update the button
+        markCodedTodayButtonElement.textContent = markCodedTodayButtonText;
+        markCodedTodayButtonElement.disabled = buttonDisabled;
+    }
+
+    // Add event listener for button click
+    markCodedTodayButtonElement.addEventListener('click', () => {
+
+        if (streakState.lastCodedDate === getTodaysDate()) {
+            // No update to current streak
+            console.log('No update to current streak');
+        } else if (streakState.lastCodedDate === getYesterdaysDate()) {
+            // Increment current streak
+            streakState.currentStreak += 1;
+            console.log('Increment current streak');
+        } else {
+            // Reset current streak
+            streakState.currentStreak = 1;
+            console.log('Reset current streak');
+        }
+
+        // Update lastCodedDate
+        streakState.lastCodedDate = getTodaysDate();
+
+        // Save the state
+        saveState();
+        
+        // Update widget
+        renderWidget();
+
     });
 
-    // Initial load
-    loadData();
+    // Following code executes when the app is loaded
+    // 1. Load the state from local storage
+    loadState();
+
+    // 2. Render the widget based on the state
+    renderWidget();
+
 });

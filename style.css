@@ -78,7 +78,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-.streak-container {
+#streak-container {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -92,7 +92,7 @@ body {
 	color: #333;
 	font-weight: bold;
 }
-.mark-coded-today-button {
+#mark-coded-today-button {
 	margin: 10px;
 	padding: 15px;
 	width: 100%;
@@ -106,26 +106,29 @@ body {
     transition: background-color 0.3s;
 }
 
-.mark-coded-today-button:disabled {
+#mark-coded-today-button:disabled {
     background-color: #a5d6a7; /* Lighter green for disabled state */
     cursor: not-allowed;
 }
 
-.streak-header {
+#streak-header {
 	margin: 10px;
     font-size: 18px;
     color: #666;
 }
-.streak-counter {
+#streak-counter {
 	margin: 10px;
 	font-size: 72px;
 	color: #4CAF50;
 	font-weight: bolder;
 }
-.streak-message {
+#streak-message {
 	margin:10px;
 	text-align: center;
     color: #666;
+}
+#streak-message p {
+	margin-bottom: 10px;
 }
 
 /* 4. States */
