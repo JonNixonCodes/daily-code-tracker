@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (lastCodedDate === null) {
             lastCodedDate = 'Never';
         };
-        streakState.currentStreak = currentStreak;
+        streakState.currentStreak = parseInt(currentStreak, 10) || 0;
         streakState.lastCodedDate = lastCodedDate;
     };
     
